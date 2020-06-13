@@ -1,0 +1,574 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    istio-injection: disabled
+  name: bookstore-servicemesh
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: book-admin
+  namespace: bookstore-servicemesh
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: book-admin-role
+  namespace: bookstore-servicemesh
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  - endpoints
+  - services
+  - nodes
+  - nodes/proxy
+  - pods
+  - configmaps
+  verbs:
+  - list
+  - get
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: book-admin-role-binding
+  namespace: bookstore-servicemesh
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: book-admin-role
+subjects:
+- kind: ServiceAccount
+  name: book-admin
+  namespace: bookstore-servicemesh
+---
+apiVersion: v1
+data:
+  application.yaml: |-
+    database: hsqldb
+
+    spring:
+      datasource:
+        schema: "classpath:db/${database}/schema.sql"
+        data: "classpath:db/${database}/data.sql"
+        sql-script-encoding: UTF-8
+      jpa:
+        show-sql: false
+        hibernate:
+          ddl-auto: none
+        open-in-view: false
+      resources:
+        chain:
+          compressed: true
+          cache: true
+        cache:
+          period: 86400
+
+    logging:
+      pattern:
+        console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(-){faint} %clr([%t]){faint} %clr(%-40logger{39}){cyan}[%line]%clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+      level:
+        root: INFO
+
+    server:
+      port: ${PORT:80}
+kind: ConfigMap
+metadata:
+  name: account
+  namespace: bookstore-servicemesh
+---
+apiVersion: v1
+data:
+  application.yaml: |-
+    database: hsqldb
+
+    logging:
+      pattern:
+        console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(-){faint} %clr([%t]){faint} %clr(%-40logger{39}){cyan}[%line]%clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+      level:
+        root: INFO
+
+    server:
+      port: ${PORT:80}
+kind: ConfigMap
+metadata:
+  name: authentication
+  namespace: bookstore-servicemesh
+---
+apiVersion: v1
+data:
+  application.yaml: |-
+    server:
+      port: ${PORT:80}
+
+    logging:
+      level:
+        root: INFO
+kind: ConfigMap
+metadata:
+  name: frontend
+  namespace: bookstore-servicemesh
+---
+apiVersion: v1
+data:
+  application.yaml: |-
+    database: hsqldb
+
+    spring:
+      datasource:
+        schema: "classpath:db/${database}/schema.sql"
+        data: "classpath:db/${database}/data.sql"
+        sql-script-encoding: UTF-8
+      jpa:
+        show-sql: false
+        hibernate:
+          ddl-auto: none
+        open-in-view: false
+      resources:
+        chain:
+          compressed: true
+          cache: true
+        cache:
+          period: 86400
+
+    logging:
+      pattern:
+        console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(-){faint} %clr([%t]){faint} %clr(%-40logger{39}){cyan}[%line]%clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+      level:
+        root: INFO
+
+    server:
+      port: ${PORT:80}
+kind: ConfigMap
+metadata:
+  name: payment
+  namespace: bookstore-servicemesh
+---
+apiVersion: v1
+data:
+  application.yaml: |-
+    database: hsqldb
+
+    spring:
+      datasource:
+        schema: "classpath:db/${database}/schema.sql"
+        data: "classpath:db/${database}/data.sql"
+        sql-script-encoding: UTF-8
+      jpa:
+        show-sql: false
+        hibernate:
+          ddl-auto: none
+        open-in-view: false
+      resources:
+        chain:
+          compressed: true
+          cache: true
+        cache:
+          period: 86400
+
+    logging:
+      pattern:
+        console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(-){faint} %clr([%t]){faint} %clr(%-40logger{39}){cyan}[%line]%clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+      level:
+        root: INFO
+
+    server:
+      port: ${PORT:80}
+kind: ConfigMap
+metadata:
+  name: warehouse
+  namespace: bookstore-servicemesh
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: account
+  name: account
+  namespace: bookstore-servicemesh
+spec:
+  ports:
+  - name: http-server
+    port: 80
+    targetPort: http-server
+  selector:
+    app: account
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: authentication
+  name: authentication
+  namespace: bookstore-servicemesh
+spec:
+  ports:
+  - name: http-server
+    port: 80
+    targetPort: http-server
+  selector:
+    app: authentication
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: frontend
+  name: frontend
+  namespace: bookstore-servicemesh
+spec:
+  ports:
+  - name: http-server
+    port: 80
+    targetPort: http-server
+  selector:
+    app: frontend
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: payment
+  name: payment
+  namespace: bookstore-servicemesh
+spec:
+  ports:
+  - name: http-server
+    port: 80
+    targetPort: http-server
+  selector:
+    app: payment
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: warehouse
+  name: warehouse
+  namespace: bookstore-servicemesh
+spec:
+  ports:
+  - name: http-server
+    port: 80
+    targetPort: http-server
+  selector:
+    app: warehouse
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: account
+  name: bookstore-servicemesh-domain-account
+  namespace: bookstore-servicemesh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: account
+  template:
+    metadata:
+      labels:
+        app: account
+    spec:
+      containers:
+      - env:
+        - name: PORT
+          value: "80"
+        - name: JAVA_TOOL_OPTIONS
+          value: -agentlib:jdwp=transport=dt_socket,server=y,address=5005,suspend=n,quiet=y
+        image: icyfenix/bookstore-istio-domain-account
+        name: account
+        ports:
+        - containerPort: 80
+          name: http-server
+        volumeMounts:
+        - mountPath: config
+          name: account-config
+      serviceAccountName: book-admin
+      volumes:
+      - configMap:
+          items:
+          - key: application.yaml
+            path: application.yaml
+          name: account
+        name: account-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: authentication
+  name: bookstore-servicemesh-domain-authentication
+  namespace: bookstore-servicemesh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authentication
+  template:
+    metadata:
+      labels:
+        app: authentication
+    spec:
+      containers:
+      - env:
+        - name: PORT
+          value: "80"
+        - name: JAVA_TOOL_OPTIONS
+          value: -agentlib:jdwp=transport=dt_socket,server=y,address=5005,suspend=n,quiet=y
+        image: icyfenix/bookstore-istio-domain-authentication
+        name: authentication
+        ports:
+        - containerPort: 80
+          name: http-server
+        volumeMounts:
+        - mountPath: config
+          name: authentication-config
+      serviceAccountName: book-admin
+      volumes:
+      - configMap:
+          items:
+          - key: application.yaml
+            path: application.yaml
+          name: authentication
+        name: authentication-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: frontend
+  name: bookstore-servicemesh-domain-frontend
+  namespace: bookstore-servicemesh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - env:
+        - name: PORT
+          value: "80"
+        - name: JAVA_TOOL_OPTIONS
+          value: -agentlib:jdwp=transport=dt_socket,server=y,address=5005,suspend=n,quiet=y
+        image: icyfenix/bookstore-istio-domain-frontend
+        name: gateway
+        ports:
+        - containerPort: 80
+          name: http-server
+        volumeMounts:
+        - mountPath: config
+          name: frontend-config
+      serviceAccountName: book-admin
+      volumes:
+      - configMap:
+          items:
+          - key: application.yaml
+            path: application.yaml
+          name: frontend
+        name: frontend-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: payment
+  name: bookstore-servicemesh-domain-payment
+  namespace: bookstore-servicemesh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+      - env:
+        - name: PORT
+          value: "80"
+        - name: JAVA_TOOL_OPTIONS
+          value: -agentlib:jdwp=transport=dt_socket,server=y,address=5005,suspend=n,quiet=y
+        image: icyfenix/bookstore-istio-domain-payment
+        name: payment
+        ports:
+        - containerPort: 80
+          name: http-server
+        volumeMounts:
+        - mountPath: config
+          name: payment-config
+      serviceAccountName: book-admin
+      volumes:
+      - configMap:
+          items:
+          - key: application.yaml
+            path: application.yaml
+          name: payment
+        name: payment-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: warehouse
+  name: bookstore-servicemesh-domain-warehouse
+  namespace: bookstore-servicemesh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: warehouse
+  template:
+    metadata:
+      labels:
+        app: warehouse
+    spec:
+      containers:
+      - env:
+        - name: PORT
+          value: "80"
+        - name: JAVA_TOOL_OPTIONS
+          value: -agentlib:jdwp=transport=dt_socket,server=y,address=5005,suspend=n,quiet=y
+        image: icyfenix/bookstore-istio-domain-warehouse
+        name: warehouse
+        ports:
+        - containerPort: 80
+          name: http-server
+        volumeMounts:
+        - mountPath: config
+          name: warehouse-config
+      serviceAccountName: book-admin
+      volumes:
+      - configMap:
+          items:
+          - key: application.yaml
+            path: application.yaml
+          name: warehouse
+        name: warehouse-config
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: bookstore-gateway
+  namespace: bookstore-servicemesh
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 8080
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: bookstore
+  namespace: bookstore-servicemesh
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - bookstore-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /restful/accounts
+      route:
+        - destination:
+            host: account
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /restful/pay
+        - uri:
+            prefix: /restful/settlements
+      route:
+        - destination:
+            host: payment
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /restful/advertisements
+        - uri:
+            prefix: /restful/products
+      route:
+        - destination:
+            host: warehouse
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /oauth
+      route:
+        - destination:
+            host: authentication
+            port:
+              number: 80
+    - route:
+        - destination:
+            host: frontend
+            port:
+              number: 80
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: frontend
+  namespace: bookstore-servicemesh
+spec:
+  host: frontend
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: account
+  namespace: bookstore-servicemesh
+spec:
+  host: account
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: payment
+  namespace: bookstore-servicemesh
+spec:
+  host: payment
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: warehouse
+  namespace: bookstore-servicemesh
+spec:
+  host: warehouse
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: authentication
+  namespace: bookstore-servicemesh
+spec:
+  host: authentication
+---

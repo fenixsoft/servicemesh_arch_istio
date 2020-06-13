@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookstore-servicemesh-domain-frontend
+  namespace: bookstore-servicemesh
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      serviceAccountName: book-admin
+      containers:
+        - name: gateway
+          image: icyfenix/bookstore-istio-domain-frontend
+          ports:
+            - name: http-server
+              containerPort: 80
+          volumeMounts:
+            - name: frontend-config
+              mountPath: config
+          env:
+            - name: PORT
+              value: "80"
+            - name: JAVA_TOOL_OPTIONS
+              value: -agentlib:jdwp=transport=dt_socket,server=y,address=5005,suspend=n,quiet=y
+      volumes:
+        - name: frontend-config
+          configMap:
+            name: frontend
+            items:
+              - key: application.yaml
+                path: application.yaml

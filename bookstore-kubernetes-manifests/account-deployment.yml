@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookstore-servicemesh-domain-account
+  namespace: bookstore-servicemesh
+  labels:
+    app: account
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: account
+  template:
+    metadata:
+      labels:
+        app: account
+    spec:
+      serviceAccountName: book-admin
+      containers:
+        - name: account
+          image: icyfenix/bookstore-istio-domain-account
+          ports:
+            - name: http-server
+              containerPort: 80
+          volumeMounts:
+            - name: account-config
+              mountPath: config
+          env:
+            - name: PORT
+              value: "80"
+            - name: JAVA_TOOL_OPTIONS
+              value: -agentlib:jdwp=transport=dt_socket,server=y,address=5005,suspend=n,quiet=y
+      volumes:
+        - name: account-config
+          configMap:
+            name: account
+            items:
+              - key: application.yaml
+                path: application.yaml

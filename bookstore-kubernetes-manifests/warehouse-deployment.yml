@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookstore-servicemesh-domain-warehouse
+  namespace: bookstore-servicemesh
+  labels:
+    app: warehouse
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: warehouse
+  template:
+    metadata:
+      labels:
+        app: warehouse
+    spec:
+      serviceAccountName: book-admin
+      containers:
+        - name: warehouse
+          image: icyfenix/bookstore-istio-domain-warehouse
+          ports:
+            - name: http-server
+              containerPort: 80
+          volumeMounts:
+            - name: warehouse-config
+              mountPath: config
+          env:
+            - name: PORT
+              value: "80"
+            - name: JAVA_TOOL_OPTIONS
+              value: -agentlib:jdwp=transport=dt_socket,server=y,address=5005,suspend=n,quiet=y
+      volumes:
+        - name: warehouse-config
+          configMap:
+            name: warehouse
+            items:
+              - key: application.yaml
+                path: application.yaml

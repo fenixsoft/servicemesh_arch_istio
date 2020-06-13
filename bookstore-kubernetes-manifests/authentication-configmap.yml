@@ -1,0 +1,17 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: authentication
+  namespace: bookstore-servicemesh
+data:
+  application.yaml: |-
+    database: hsqldb
+
+    logging:
+      pattern:
+        console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(-){faint} %clr([%t]){faint} %clr(%-40logger{39}){cyan}[%line]%clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+      level:
+        root: INFO
+
+    server:
+      port: ${PORT:80}

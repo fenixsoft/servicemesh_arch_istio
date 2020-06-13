@@ -1,0 +1,40 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: frontend
+  namespace: bookstore-servicemesh
+spec:
+  host: frontend
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: account
+  namespace: bookstore-servicemesh
+spec:
+  host: account
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: payment
+  namespace: bookstore-servicemesh
+spec:
+  host: payment
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: warehouse
+  namespace: bookstore-servicemesh
+spec:
+  host: warehouse
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: authentication
+  namespace: bookstore-servicemesh
+spec:
+  host: authentication
+---

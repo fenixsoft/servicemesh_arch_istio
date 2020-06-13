@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+    <modules>
+        <module>bookstore-servicemesh-domain-frontend</module>
+        <module>bookstore-servicemesh-domain-authentication</module>
+        <module>bookstore-servicemesh-domain-payment</module>
+        <module>bookstore-servicemesh-domain-account</module>
+        <module>bookstore-servicemesh-domain-warehouse</module>
+        <module>bookstore-servicemesh-library-infrastructure</module>
+        <module>bookstore-servicemesh-library-testing</module>
+    </modules>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.2.6.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.github.fenixsoft</groupId>
+    <artifactId>bookstore-servicemesh-istio</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>bookstore-servicemesh-istio</name>
+    <description>Service Mesh Architecture Demonstrate with Istio Infrastructure</description>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <argLine>-Dfile.encoding=UTF-8</argLine>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

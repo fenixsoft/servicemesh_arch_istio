@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: bookstore-servicemesh
+
+resources:
+  - bookstore-namespaces.yaml
+  - bookstore-serviceaccount.yml
+  - bookstore-role.yml
+  - bookstore-rolebinding.yml
+  - account-configmap.yml
+  - account-deployment.yml
+  - account-service.yml
+  - frontend-configmap.yml
+  - frontend-deployment.yml
+  - frontend-service.yml
+  - payment-configmap.yml
+  - payment-deployment.yml
+  - payment-service.yml
+  - authentication-configmap.yml
+  - authentication-deployment.yml
+  - authentication-service.yml
+  - warehouse-configmap.yml
+  - warehouse-deployment.yml
+  - warehouse-service.yml

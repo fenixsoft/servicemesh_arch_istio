@@ -1,0 +1,68 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: bookstore-gateway
+  namespace: bookstore-servicemesh
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 8080
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: bookstore
+  namespace: bookstore-servicemesh
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - bookstore-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /restful/accounts
+    route:
+    - destination:
+        host: account
+        port:
+          number: 80
+  - match:
+      - uri:
+          prefix: /restful/pay
+      - uri:
+          prefix: /restful/settlements
+    route:
+      - destination:
+          host: payment
+          port:
+            number: 80
+  - match:
+      - uri:
+          prefix: /restful/advertisements
+      - uri:
+          prefix: /restful/products
+    route:
+      - destination:
+          host: warehouse
+          port:
+            number: 80
+  - match:
+      - uri:
+          prefix: /oauth
+    route:
+      - destination:
+          host: authentication
+          port:
+            number: 80
+  - route:
+      - destination:
+          host: frontend
+          port:
+            number: 80

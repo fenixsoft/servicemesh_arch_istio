@@ -1,0 +1,23 @@
+apiVersion: skaffold/v2beta4
+kind: Config
+build:
+  tagPolicy:
+    sha256: {}
+  artifacts:
+    - image: icyfenix/bookstore-istio-domain-warehouse
+      context: bookstore-servicemesh-domain-warehouse
+    - image: icyfenix/bookstore-istio-domain-authentication
+      context: bookstore-servicemesh-domain-authentication
+    - image: icyfenix/bookstore-istio-domain-account
+      context: bookstore-servicemesh-domain-account
+    - image: icyfenix/bookstore-istio-domain-payment
+      context: bookstore-servicemesh-domain-payment
+    - image: icyfenix/bookstore-istio-domain-frontend
+      context: bookstore-servicemesh-domain-frontend
+deploy:
+  kubectl:
+    manifests:
+      - ./bookstore-kubernetes-manifests/bookstore-namespaces.yaml
+      - ./bookstore-kubernetes-manifests/*.yml
+      - ./bookstore-istio-manifests/*.yaml
+  statusCheckDeadlineSeconds: 20000
