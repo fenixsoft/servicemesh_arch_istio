@@ -4,7 +4,7 @@ echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 # frontend
 cd ./bookstore-servicemesh-domain-frontend/
 docker build -t bookstore-istio-domain-frontend .
-docker tag bookstore-istio-domain-frontend $DOCKER_USERNAME/bookstore-istio-platform-gateway
+docker tag bookstore-istio-domain-frontend $DOCKER_USERNAME/bookstore-istio-domain-frontend
 cd ..
 
 # authentication
