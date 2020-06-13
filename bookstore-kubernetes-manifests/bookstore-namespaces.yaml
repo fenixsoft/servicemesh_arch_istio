@@ -3,4 +3,4 @@ kind: Namespace
 metadata:
   name: bookstore-servicemesh
   labels:
-    istio-injection: disabled
+    istio-injection: enabled
