@@ -1,0 +1,29 @@
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: authentication-mtls
+  namespace: bookstore-servicemesh
+spec:
+  mtls:
+    mode: STRICT
+---
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: authentication-jwt-token
+  namespace: bookstore-servicemesh
+spec:
+  jwtRules:
+    - issuer: "icyfenix@gmail.com"
+      jwks: |
+        {
+            "keys": [
+                {
+                    "e": "AQAB",
+                    "kid": "bookstore-jwt-kid",
+                    "kty": "RSA",
+                    "n": "i-htQPOTvNMccJjOkCAzd3YlqBElURzkaeRLDoJYskyU59JdGO-p_q4JEH0DZOM2BbonGI4lIHFkiZLO4IBBZ5j2P7U6QYURt6-AyjS6RGw9v_wFdIRlyBI9D3EO7u8rCA4RktBLPavfEc5BwYX2Vb9wX6N63tV48cP1CoGU0GtIq9HTqbEQs5KVmme5n4XOuzxQ6B2AGaPBJgdq_K0ZWDkXiqPz6921X3oiNYPCQ22bvFxb4yFX8ZfbxeYc-1rN7PaUsK009qOx-qRenHpWgPVfagMbNYkm0TOHNOWXqukxE-soCDI_Nc--1khWCmQ9E2B82ap7IXsVBAnBIaV9WQ"
+                }
+            ]
+        }
+      forwardOriginalToken: true

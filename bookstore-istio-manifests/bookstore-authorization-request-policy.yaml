@@ -1,0 +1,18 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: authorization-request
+  namespace: bookstore-servicemesh
+spec:
+  action: DENY
+  rules:
+    - from:
+        - source:
+            notRequestPrincipals: ["*"]
+            notNamespaces: ["bookstore-servicemesh"]
+      to:
+        - operation:
+            paths:
+              - /restful/accounts/*
+              - /restful/pay/*
+              - /restful/settlements*

@@ -1,0 +1,22 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: authorization-peer
+  namespace: bookstore-servicemesh
+spec:
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            namespaces: ["bookstore-servicemesh"]
+      to:
+        - operation:
+            paths:
+              - /restful/accounts/*
+              - /restful/products*
+              - /restful/pay/*
+              - /restful/settlements*
+            methods: ["GET","POST","PUT","PATCH"]
+    - from:
+        - source:
+            namespaces: ["istio-system"]
